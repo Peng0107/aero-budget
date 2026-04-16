@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Aero Budget</title>
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#121212">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  
+  <!-- PeerJS for WebRTC Sync -->
+  <script src="https://unpkg.com/peerjs@1.5.0/dist/peerjs.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header class="glass-header">
+      <div class="header-content">
+        <h1>Aero</h1>
+        <button id="nav-sync-btn" class="icon-btn tooltip" title="Sync Devices">
+          <i class="ri-refresh-line"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="content-scroll" id="main-view">
+      
+      <!-- Balance Card -->
+      <section class="balance-card">
+        <div class="balance-bg"></div>
+        <div class="balance-info">
+          <p class="subtitle">Total Balance</p>
+          <h2 id="total-balance-display">$0.00</h2>
+        </div>
+        <div class="balance-stats">
+          <div class="stat income">
+            <i class="ri-arrow-up-circle-fill"></i>
+            <div>
+              <p>Income</p>
+              <h4 id="total-income-display">$0.00</h4>
+            </div>
+          </div>
+          <div class="stat expense">
+            <i class="ri-arrow-down-circle-fill"></i>
+            <div>
+              <p>Expense</p>
+              <h4 id="total-expense-display">$0.00</h4>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Actions -->
+      <section class="actions">
+        <button id="add-income-btn" class="action-btn success">
+          <i class="ri-add-line"></i> Income
+        </button>
+        <button id="add-expense-btn" class="action-btn danger">
+          <i class="ri-subtract-line"></i> Expense
+        </button>
+      </section>
+
+      <!-- Recent Transactions -->
+      <section class="transactions-section">
+        <div class="section-header">
+          <h3>Recent Activity</h3>
+          <button id="view-all-btn" class="text-btn">View All</button>
+        </div>
+        <div id="transactions-list" class="transactions-list">
+          <!-- Populated by JS -->
+          <div class="empty-state">
+            <i class="ri-wallet-3-line"></i>
+            <p>No transactions yet</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Sync View (Hidden by default) -->
+    <main class="content-scroll hidden" id="sync-view">
+      <section class="sync-container">
+        <h2>Device Sync</h2>
+        <p class="sync-desc">Connect securely over peer-to-peer Wi-Fi.</p>
+
+        <div class="sync-status" id="connection-status">
+          <div class="status-indicator offline"></div>
+          <span>Disconnected</span>
+        </div>
+
+        <div class="sync-actions" id="sync-setup-area">
+          <div class="card my-id-card">
+            <p>Your Device Code</p>
+            <h3 id="my-peer-id">Loading...</h3>
+          </div>
+          
+          <div class="card connect-card">
+            <p>Connect to Device</p>
+            <input type="text" id="target-peer-id" placeholder="Enter remote code" autocomplete="off">
+            <button id="connect-btn" class="primary-btn">Connect</button>
+          </div>
+        </div>
+        
+        <div class="sync-actions hidden" id="sync-connected-area">
+          <div class="card success-card">
+            <i class="ri-shield-check-fill check-icon"></i>
+            <h3>Connected via Local Network</h3>
+            <p>Your transactions are securely synced.</p>
+            <button id="disconnect-btn" class="danger-btn outline">Disconnect</button>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- Add Transaction Modal (Overlay) -->
+    <div id="transaction-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-title">New Transaction</h3>
+          <button id="close-modal-btn" class="icon-btn"><i class="ri-close-line"></i></button>
+        </div>
+        <form id="transaction-form">
+          <input type="hidden" id="entry-type" value="expense">
+          
+          <div class="input-group">
+            <label>Amount</label>
+            <div class="amount-input-wrapper">
+              <span class="currency-symbol">$</span>
+              <input type="number" id="entry-amount" step="0.01" min="0.01" placeholder="0.00" required>
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label>Description</label>
+            <input type="text" id="entry-desc" placeholder="e.g. Groceries" required>
+          </div>
+          
+          <button type="submit" class="primary-btn full-width">Save</button>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Footer Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-target="main-view">
+        <i class="ri-home-5-line"></i>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" data-target="sync-view">
+        <i class="ri-wifi-line"></i>
+        <span>Sync</span>
+      </button>
+    </nav>
+    
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
