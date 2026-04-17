@@ -33,13 +33,14 @@ function saveData() {
   }
 }
 
-function saveTransaction(id, type, amount, desc) {
+function saveTransaction(id, type, amount, desc, dateVal) {
   if (id) {
     const index = transactions.findIndex(t => t.id === id);
     if (index !== -1) {
       transactions[index].type = type;
       transactions[index].amount = parseFloat(amount);
       transactions[index].desc = desc;
+      if (dateVal) transactions[index].date = dateVal + "T12:00:00Z";
     }
   } else {
     const tx = {
@@ -47,7 +48,7 @@ function saveTransaction(id, type, amount, desc) {
       type,
       amount: parseFloat(amount),
       desc,
-      date: new Date().toISOString()
+      date: dateVal ? dateVal + "T12:00:00Z" : new Date().toISOString()
     };
     transactions.push(tx);
   }
@@ -165,6 +166,20 @@ function setupEventListeners() {
       document.getElementById(btn.dataset.target).classList.remove('hidden');
     });
   });
+
+  // View All History
+  const mainView = document.getElementById('main-view');
+  const viewAllBtn = document.getElementById('view-all-btn');
+  if (viewAllBtn) {
+    viewAllBtn.addEventListener('click', () => {
+      mainView.classList.toggle('view-all-mode');
+      if (mainView.classList.contains('view-all-mode')) {
+        viewAllBtn.innerText = 'Close';
+      } else {
+        viewAllBtn.innerText = 'View All';
+      }
+    });
+  }
   
   // Shortcut to switch to Sync view
   document.getElementById('nav-sync-btn').addEventListener('click', () => {
@@ -192,8 +207,9 @@ function setupEventListeners() {
     const type = document.getElementById('entry-type').value;
     const amount = document.getElementById('entry-amount').value;
     const desc = document.getElementById('entry-desc').value;
+    const dateVal = document.getElementById('entry-date').value;
     
-    saveTransaction(id, type, amount, desc);
+    saveTransaction(id, type, amount, desc, dateVal);
     
     modal.classList.add('hidden');
   });
@@ -216,6 +232,11 @@ function openModal(type) {
   document.getElementById('entry-type').value = type;
   document.getElementById('entry-amount').value = '';
   document.getElementById('entry-desc').value = '';
+
+  const today = new Date();
+  const dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  document.getElementById('entry-date').value = dateStr;
+
   document.getElementById('modal-title').innerText = type === 'income' ? 'Add Income' : 'Add Expense';
   
   document.getElementById('delete-tx-btn').classList.add('hidden');
@@ -229,6 +250,11 @@ function openEditModal(tx) {
   document.getElementById('entry-type').value = tx.type;
   document.getElementById('entry-amount').value = tx.amount;
   document.getElementById('entry-desc').value = tx.desc;
+
+  const d = new Date(tx.date);
+  const dateStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  document.getElementById('entry-date').value = dateStr;
+
   document.getElementById('modal-title').innerText = 'Edit Transaction';
   
   document.getElementById('delete-tx-btn').classList.remove('hidden');

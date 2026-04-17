@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aero-budget-v2';
+const CACHE_NAME = 'aero-budget-v3';
 const ASSETS_TO_CACHE = [
   './index.html',
   './styles.css',

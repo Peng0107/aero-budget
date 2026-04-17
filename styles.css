@@ -169,6 +169,9 @@ body {
 .action-btn.success:hover { background: rgba(16, 185, 129, 0.25); }
 .action-btn.danger:hover { background: rgba(239, 68, 68, 0.25); }
 
+/* View All Mode */
+.view-all-mode .balance-card, .view-all-mode .actions { display: none !important; }
+
 /* Transactions */
 .section-header {
   display: flex;
@@ -269,11 +272,14 @@ body {
   background: none; border: none; color: var(--text-main); font-size: 32px; font-weight: 600; font-family: 'Outfit';
   width: 100%; outline: none;
 }
-.input-group input[type="text"] {
+.input-group input[type="text"],
+.input-group input[type="date"] {
   width: 100%; background: var(--bg-color); border: 1px solid var(--glass-border);
   padding: 14px; border-radius: 12px; color: var(--text-main); font-size: 16px; outline: none; transition: border-color 0.2s;
 }
-.input-group input[type="text"]:focus { border-color: var(--primary); }
+.input-group input[type="text"]:focus,
+.input-group input[type="date"]:focus { border-color: var(--primary); }
+.input-group input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
 .primary-btn {
   background: var(--primary); color: white; border: none; padding: 16px;
