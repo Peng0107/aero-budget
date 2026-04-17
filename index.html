@@ -134,6 +134,7 @@
           <button id="close-modal-btn" class="icon-btn"><i class="ri-close-line"></i></button>
         </div>
         <form id="transaction-form">
+          <input type="hidden" id="entry-id" value="">
           <input type="hidden" id="entry-type" value="expense">
           
           <div class="input-group">
@@ -149,7 +150,10 @@
             <input type="text" id="entry-desc" placeholder="e.g. Groceries" required>
           </div>
           
-          <button type="submit" class="primary-btn full-width">Save</button>
+          <div class="modal-actions">
+            <button type="button" id="delete-tx-btn" class="danger-btn hidden"><i class="ri-delete-bin-line"></i></button>
+            <button type="submit" class="primary-btn full-width">Save</button>
+          </div>
         </form>
       </div>
     </div>

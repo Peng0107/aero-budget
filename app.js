@@ -33,17 +33,31 @@ function saveData() {
   }
 }
 
-function addTransaction(type, amount, desc) {
-  const tx = {
-    id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
-    type,
-    amount: parseFloat(amount),
-    desc,
-    date: new Date().toISOString()
-  };
-  transactions.push(tx);
-  // Sort descending by date
+function saveTransaction(id, type, amount, desc) {
+  if (id) {
+    const index = transactions.findIndex(t => t.id === id);
+    if (index !== -1) {
+      transactions[index].type = type;
+      transactions[index].amount = parseFloat(amount);
+      transactions[index].desc = desc;
+    }
+  } else {
+    const tx = {
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+      type,
+      amount: parseFloat(amount),
+      desc,
+      date: new Date().toISOString()
+    };
+    transactions.push(tx);
+  }
+  
   transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+  saveData();
+}
+
+function deleteTransaction(id) {
+  transactions = transactions.filter(t => t.id !== id);
   saveData();
 }
 
@@ -90,13 +104,27 @@ function renderDashboard() {
     return;
   }
 
-  // Render top 10
-  transactions.slice(0, 10).forEach(tx => {
+  // Group by Month
+  let currentMonthStr = "";
+
+  transactions.forEach(tx => {
+    const d = new Date(tx.date);
+    const monthStr = d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+    
+    if (monthStr !== currentMonthStr) {
+      const divider = document.createElement('div');
+      divider.className = 'month-divider';
+      divider.innerText = monthStr;
+      listEl.appendChild(divider);
+      currentMonthStr = monthStr;
+    }
+
     const isIncome = tx.type === 'income';
-    const dateStr = new Date(tx.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    const dateStr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
     
     const div = document.createElement('div');
     div.className = 'tx-item';
+    div.onclick = () => openEditModal(tx);
     div.innerHTML = `
       <div class="tx-left">
         <div class="tx-icon ${tx.type}">
@@ -143,32 +171,31 @@ function setupEventListeners() {
     navItems[1].click();
   });
 
-  // Modal interactions
-  const openModal = (type) => {
-    document.getElementById('entry-type').value = type;
-    document.getElementById('modal-title').innerText = type === 'income' ? 'Add Income' : 'Add Expense';
-    modal.classList.remove('hidden');
-    document.getElementById('entry-amount').focus();
-  };
-
   addIncomeBtn.addEventListener('click', () => openModal('income'));
   addExpenseBtn.addEventListener('click', () => openModal('expense'));
   
   document.getElementById('close-modal-btn').addEventListener('click', () => {
     modal.classList.add('hidden');
-    form.reset();
+  });
+
+  document.getElementById('delete-tx-btn').addEventListener('click', () => {
+    const id = document.getElementById('entry-id').value;
+    if (id && confirm('Delete this transaction?')) {
+      deleteTransaction(id);
+      modal.classList.add('hidden');
+    }
   });
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    const id = document.getElementById('entry-id').value;
     const type = document.getElementById('entry-type').value;
     const amount = document.getElementById('entry-amount').value;
     const desc = document.getElementById('entry-desc').value;
     
-    addTransaction(type, amount, desc);
+    saveTransaction(id, type, amount, desc);
     
     modal.classList.add('hidden');
-    form.reset();
   });
   
   // Sync Controls
@@ -181,6 +208,33 @@ function setupEventListeners() {
     if (conn) conn.close();
     setSyncStatus(false);
   });
+}
+
+// --- Modal Logic ---
+function openModal(type) {
+  document.getElementById('entry-id').value = '';
+  document.getElementById('entry-type').value = type;
+  document.getElementById('entry-amount').value = '';
+  document.getElementById('entry-desc').value = '';
+  document.getElementById('modal-title').innerText = type === 'income' ? 'Add Income' : 'Add Expense';
+  
+  document.getElementById('delete-tx-btn').classList.add('hidden');
+  
+  document.getElementById('transaction-modal').classList.remove('hidden');
+  document.getElementById('entry-amount').focus();
+}
+
+function openEditModal(tx) {
+  document.getElementById('entry-id').value = tx.id;
+  document.getElementById('entry-type').value = tx.type;
+  document.getElementById('entry-amount').value = tx.amount;
+  document.getElementById('entry-desc').value = tx.desc;
+  document.getElementById('modal-title').innerText = 'Edit Transaction';
+  
+  document.getElementById('delete-tx-btn').classList.remove('hidden');
+  
+  document.getElementById('transaction-modal').classList.remove('hidden');
+  document.getElementById('entry-amount').focus();
 }
 
 // --- WebRTC PeerJS Sync Logic ---

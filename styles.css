@@ -180,6 +180,8 @@ body {
 .section-header h3 { font-size: 18px; font-weight: 500; }
 .text-btn { background: none; border: none; color: var(--primary); font-size: 14px; cursor: pointer; }
 
+.month-divider { font-size: 13px; font-weight: 600; color: var(--text-muted); margin: 16px 0 8px 8px; text-transform: uppercase; letter-spacing: 1px; }
+
 .transactions-list { display: flex; flex-direction: column; gap: 12px; }
 
 .tx-item {
@@ -279,6 +281,12 @@ body {
   box-shadow: 0 4px 15px var(--primary-glow); transition: transform 0.2s;
 }
 .primary-btn:active { transform: scale(0.98); }
+
+.modal-actions { display: flex; gap: 12px; width: 100%; }
+.danger-btn { background: var(--surface-color-light); color: var(--danger); border: 1px solid var(--danger); padding: 14px 18px; border-radius: 14px; font-size: 20px; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center; }
+.danger-btn:active { transform: scale(0.98); }
+.danger-btn:hover { background: rgba(239, 68, 68, 0.1); }
+
 .full-width { width: 100%; }
 
 /* Sync View Specifics */
