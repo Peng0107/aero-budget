@@ -93,7 +93,8 @@ function renderDashboard() {
 
   const balance = totalIncome - totalExpense;
 
-  document.getElementById('total-balance-display').innerText = formatMoney(balance);
+  const balancePrefix = balance < 0 ? '-' : '';
+  document.getElementById('total-balance-display').innerText = balancePrefix + formatMoney(balance);
   document.getElementById('total-income-display').innerText = formatMoney(totalIncome);
   document.getElementById('total-expense-display').innerText = formatMoney(totalExpense);
 
