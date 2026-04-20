@@ -94,7 +94,17 @@ function renderDashboard() {
   const balance = totalIncome - totalExpense;
 
   const balancePrefix = balance < 0 ? '-' : '';
-  document.getElementById('total-balance-display').innerText = balancePrefix + formatMoney(balance);
+  const balEl = document.getElementById('total-balance-display');
+  balEl.innerText = balancePrefix + formatMoney(balance);
+  
+  if (balance > 0) {
+    balEl.style.color = 'var(--success)';
+  } else if (balance < 0) {
+    balEl.style.color = 'var(--danger)';
+  } else {
+    balEl.style.color = 'var(--text-main)';
+  }
+
   document.getElementById('total-income-display').innerText = formatMoney(totalIncome);
   document.getElementById('total-expense-display').innerText = formatMoney(totalExpense);
 
